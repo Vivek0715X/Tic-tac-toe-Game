@@ -1,0 +1,99 @@
+#include <iostream>
+using namespace std;
+
+const int BOARD_SIZE = 3; // Define the size of the Tic-Tac-Toe board
+char board[BOARD_SIZE][BOARD_SIZE]; // The game board
+
+// Function to initialize the board with empty spaces
+void initializeBoard() {
+    for (int i = 0; i < BOARD_SIZE; ++i)
+        for (int j = 0; j < BOARD_SIZE; ++j)
+            board[i][j] = ' '; // Set each cell to an empty space
+}
+
+// Function to display the current state of the board
+void displayBoard() {
+    cout << "-------------\n";
+    for (int i = 0; i < BOARD_SIZE; ++i) {
+        cout << "| ";
+        for (int j = 0; j < BOARD_SIZE; ++j) {
+            cout << board[i][j] << " | "; // Print each cell with separators
+        }
+        cout << "\n-------------\n";
+    }
+}
+
+// Function to check if the given player has won
+bool checkWin(char player) {
+    // Check each row and column for a win
+    for (int i = 0; i < BOARD_SIZE; ++i) {
+        if ((board[i][0] == player && board[i][1] == player && board[i][2] == player) ||  // Check rows
+            (board[0][i] == player && board[1][i] == player && board[2][i] == player)) {  // Check columns
+            return true;
+        }
+    }
+    // Check both diagonals for a win
+    return (board[0][0] == player && board[1][1] == player && board[2][2] == player) ||  // Main diagonal
+           (board[0][2] == player && board[1][1] == player && board[2][0] == player);    // Anti-diagonal
+}
+
+// Function to check if the board is full (i.e., no empty spaces)
+bool isBoardFull() {
+    for (int i = 0; i < BOARD_SIZE; ++i)
+        for (int j = 0; j < BOARD_SIZE; ++j)
+            if (board[i][j] == ' ') // If any cell is empty, the board is not full
+                return false;
+    return true; // No empty cells, the board is full
+}
+
+// Function to check if the game is over (either win or draw)
+bool isGameOver(char currentPlayer) {
+    return checkWin(currentPlayer) || isBoardFull();
+}
+
+// Function to check if the player's move is valid
+bool isValidMove(int row, int col) {
+    return row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE && board[row][col] == ' ';
+    // Valid move if within bounds and the selected cell is empty
+}
+
+// Function to get player input and make a move
+void makeMove(char currentPlayer) {
+    int row, col;
+    do {
+        // Prompt the current player to enter their move
+        cout << "Player " << currentPlayer << ", enter row (0-2) and column (0-2) separated by space: ";
+        cin >> row >> col;
+    } while (!isValidMove(row, col)); // Keep asking until a valid move is made
+    board[row][col] = currentPlayer; // Place the player's symbol on the board
+}
+
+// Function to declare the result of the game
+void declareResult(char currentPlayer) {
+    if (checkWin(currentPlayer))
+        cout << "Player " << currentPlayer << " wins!\n"; // Announce the winner
+    else
+        cout << "It's a draw!\n"; // Announce a draw if the board is full with no winner
+}
+
+int main() {
+    char currentPlayer = 'X'; // Player X always starts
+
+    initializeBoard(); // Initialize the game board
+    displayBoard(); // Display the initial empty board
+
+    // Main game loop
+    while (!isGameOver(currentPlayer)) {
+        makeMove(currentPlayer); // Get the current player's move
+        displayBoard(); // Display the board after the move
+        if (!checkWin(currentPlayer)) {
+            // Switch to the other player if the game isn't over
+            currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+        }
+    }
+
+    // Declare the result after the game is over
+    declareResult(currentPlayer);
+
+    return 0; // End the program
+}
